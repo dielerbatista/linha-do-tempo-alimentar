@@ -1,593 +1,800 @@
 <!DOCTYPE html>
-<!-- saved from url=(0132)file:///G:/Meu%20Drive/Nutri%C3%A7%C3%A3o%20-%20UCS/Primeiro%20Semestre/Sa%C3%BAde%20Coletiva/TDE2/calculadora-hidratacao-slide.html -->
-<html lang="pt-BR"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Calculadora de Hidratação</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com/">
-  <link href="./index_files/css2" rel="stylesheet">
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Linha do Tempo Alimentar Humana</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
 
-    :root {
-      --bg:     #F0EFEB;
-      --paper:  #F9F8F5;
-      --olive:  #0074BD;
-      --olive2: #0074BD;
-      --olive3: #0074BD;
-      --muted:  #6F6B60;
-      --border: #D5D2C8;
-      --blue:   #0074BD;
-      --radius: 4px;
-    }
+  :root {
+    --prehistory: #8B5E3C;
+    --agricultural: #5A7A4A;
+    --industrial: #2C4A6E;
+    --century20: #7A3B2E;
+    --contemporary: #2D6A5A;
+    --bg: #0C0C0C;
+    --surface: #141414;
+    --line: #1E1E1E;
+    --text: #E8E0D4;
+    --muted: #6B6560;
+    --accent: #C8A96E;
+  }
 
-    body {
-      font-family: 'Barlow', sans-serif;
-      background: var(--bg);
-      min-height: 100vh;
-      color: var(--olive);
-      overflow-x: hidden;
-    }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* Textura sutil de papel */
-    body::before {
-      content: '';
-      position: fixed; inset: 0;
-      pointer-events: none; z-index: 0;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
-    }
+  html { scroll-behavior: smooth; }
 
-    /* ── HERO ── */
-    .hero {
-      position: relative; z-index: 1;
-      max-width: 740px;
-      margin: 0 auto;
-      padding: 2.2rem 2.5rem 0;
-    }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
 
-    .hero-meta {
-      display: flex;
-      justify-content: space-between;
-      font-size: 10.5px;
-      font-weight: 500;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 0.7rem;
-    }
+  /* Custom cursor */
+  .cursor {
+    width: 10px; height: 10px;
+    background: var(--accent);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none; z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s ease;
+  }
+  .cursor-follower {
+    width: 36px; height: 36px;
+    border: 1px solid rgba(200,169,110,0.4);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none; z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: all 0.18s ease;
+  }
 
-    .hero-tagline {
-      font-style: italic;
-      font-weight: 300;
-      font-size: 12.5px;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 0.1rem;
-    }
+  /* Hero */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center;
+    position: relative;
+    padding: 2rem;
+    overflow: hidden;
+  }
 
-    .hero-title {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 900;
-      font-size: clamp(3.8rem, 11vw, 7rem);
-      line-height: 0.9;
-      letter-spacing: -0.01em;
-      text-transform: uppercase;
-      color: var(--olive);
-      position: relative; z-index: 2;
-    }
+  .hero-grain {
+    position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
+    opacity: 0.4;
+    pointer-events: none;
+  }
 
-    /* Área da ilustração + título lado a lado */
-    .hero-body {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 1rem;
-    }
+  .hero-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(120px);
+    pointer-events: none;
+    animation: float 8s ease-in-out infinite;
+  }
+  .orb1 { width: 500px; height: 500px; background: rgba(139,94,60,0.15); top: -100px; left: -100px; animation-delay: 0s; }
+  .orb2 { width: 400px; height: 400px; background: rgba(90,122,74,0.12); bottom: -80px; right: -80px; animation-delay: -4s; }
+  .orb3 { width: 300px; height: 300px; background: rgba(200,169,110,0.08); top: 50%; left: 50%; transform: translate(-50%,-50%); animation-delay: -2s; }
 
-    .hero-text { flex: 1; }
+  @keyframes float {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-30px) scale(1.05); }
+  }
 
-    .hero-illus {
-      flex-shrink: 0;
-      display: flex;
-      align-items: flex-end;
-      margin-bottom: -2px;
-    }
+  .hero-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.3s forwards;
+  }
 
-    .hero-rule {
-      border: none;
-      border-top: 1.5px solid var(--border);
-      margin-top: 0;
-    }
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.8rem, 8vw, 7rem);
+    font-weight: 900;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.5s forwards;
+  }
 
-    /* ── PAGE ── */
-    .page {
-      max-width: 740px;
-      margin: 0 auto;
-      padding: 0 2.5rem 3.5rem;
-      position: relative; z-index: 1;
-    }
+  .hero-title em {
+    font-style: italic;
+    color: var(--accent);
+  }
 
-    .page-subtitle {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 300;
-      font-size: 13px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin: 1.4rem 0 1.6rem;
-    }
+  .hero-sub {
+    font-size: 1rem;
+    color: var(--muted);
+    font-weight: 300;
+    max-width: 480px;
+    line-height: 1.7;
+    margin-bottom: 3rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.7s forwards;
+  }
 
-    /* ── CARDS ── */
-    .card {
-      background: var(--paper);
-      border: 1px solid var(--border);
-      padding: 1.6rem;
-      margin-bottom: 1px;
-    }
+  .hero-scroll {
+    display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 1s forwards;
+  }
+  .hero-scroll span {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  .scroll-line {
+    width: 1px; height: 60px;
+    background: linear-gradient(to bottom, var(--accent), transparent);
+    animation: grow 2s ease-in-out infinite;
+  }
+  @keyframes grow {
+    0% { transform: scaleY(0); transform-origin: top; }
+    50% { transform: scaleY(1); transform-origin: top; }
+    51% { transform: scaleY(1); transform-origin: bottom; }
+    100% { transform: scaleY(0); transform-origin: bottom; }
+  }
 
-    .section-label {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--olive3);
-      margin-bottom: 1.3rem;
-      display: flex; align-items: center; gap: 8px;
-    }
-    .section-label::after {
-      content: ''; flex: 1; height: 1px; background: var(--border);
-    }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
 
-    /* ── ROWS ── */
-    .irow {
-      display: flex; align-items: center;
-      gap: 16px; margin-bottom: 1.1rem;
-    }
-    .irow:last-child { margin-bottom: 0; }
+  /* Timeline */
+  .timeline-section {
+    padding: 6rem 0;
+    position: relative;
+  }
 
-    .irow > label {
-      font-size: 14px; color: var(--olive);
-      flex: 1; line-height: 1.4; font-weight: 500;
-    }
+  .timeline-spine {
+    position: absolute;
+    left: 50%;
+    top: 0; bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, var(--line) 5%, var(--line) 95%, transparent);
+    transform: translateX(-50%);
+  }
 
-    .hint {
-      font-size: 12px; color: var(--muted);
-      display: block; margin-top: 2px;
-      font-style: italic; font-weight: 400;
-    }
+  .era {
+    display: grid;
+    grid-template-columns: 1fr 80px 1fr;
+    align-items: start;
+    margin-bottom: 5rem;
+    position: relative;
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .era.visible { opacity: 1; transform: translateY(0); }
 
-    .rw { display: flex; align-items: center; gap: 10px; flex: 1.1; }
+  .era-node {
+    grid-column: 2;
+    display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+    position: sticky; top: 40vh;
+    z-index: 2;
+  }
 
-    input[type=range] {
-      -webkit-appearance: none; flex: 1;
-      height: 2px; background: var(--border);
-      border-radius: 1px; outline: none;
-    }
-    input[type=range]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 18px; height: 18px;
-      background: var(--olive); border-radius: 50%;
-      cursor: pointer;
-      border: 3px solid var(--paper);
-      box-shadow: 0 0 0 1.5px var(--olive);
-      transition: transform 0.15s;
-    }
-    input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+  .era-dot {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    border: 1px solid;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem;
+    background: var(--bg);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: default;
+  }
+  .era-dot:hover {
+    transform: scale(1.15);
+    box-shadow: 0 0 30px currentColor;
+  }
 
-    .rv {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 16px; font-weight: 700;
-      letter-spacing: 0.04em;
-      min-width: 58px; text-align: right;
-      color: var(--olive);
-    }
+  .era-year {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-align: center;
+    white-space: nowrap;
+  }
 
-    .tg { display: flex; gap: 6px; flex-wrap: wrap; flex: 1.1; }
+  .era-card {
+    padding: 0 3rem;
+  }
 
-    .tb {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 12px; font-weight: 700;
-      letter-spacing: 0.1em; text-transform: uppercase;
-      padding: 6px 16px; border-radius: var(--radius);
-      border: 1.5px solid var(--border);
-      background: transparent; color: var(--muted);
-      cursor: pointer; transition: all 0.14s;
-    }
-    .tb:hover { border-color: var(--olive2); color: var(--olive); }
-    .tb.on { background: var(--olive); border-color: var(--olive); color: var(--paper); }
+  .era:nth-child(odd) .era-content { grid-column: 1; }
+  .era:nth-child(odd) .era-extra { grid-column: 3; }
+  .era:nth-child(even) .era-content { grid-column: 3; order: 3; }
+  .era:nth-child(even) .era-node { order: 2; }
+  .era:nth-child(even) .era-extra { grid-column: 1; order: 1; }
 
-    .chk-g { display: flex; flex-direction: column; gap: 8px; }
-    .chk-i {
-      display: flex; align-items: flex-start; gap: 10px;
-      font-size: 14px; color: var(--olive); cursor: pointer;
-      line-height: 1.5; font-weight: 400;
-      padding: 10px 14px;
-      border: 1.5px solid var(--border);
-      background: var(--bg);
-      transition: all 0.14s;
-    }
-    .chk-i:hover { border-color: var(--olive2); }
-    .chk-i:has(input:checked) { border-color: var(--olive); background: var(--paper); }
-    .chk-i input[type=checkbox] {
-      width: 16px; height: 16px; cursor: pointer;
-      margin-top: 2px; flex-shrink: 0;
-      accent-color: var(--olive);
-    }
+  .era-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 0.6rem;
+  }
 
-    .tsec {
-      margin-top: 1.1rem; padding-top: 1.1rem;
-      border-top: 1px solid var(--border); display: none;
-    }
+  .era-heading {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    font-weight: 700;
+    line-height: 1.15;
+    margin-bottom: 1rem;
+  }
 
-    /* ── RESULTADOS ── */
-    .results-grid {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: 1px; background: var(--border);
-      border: 1px solid var(--border); border-top: none;
-    }
+  .era-body {
+    font-size: 0.9rem;
+    line-height: 1.75;
+    color: rgba(232,224,212,0.75);
+    margin-bottom: 1.2rem;
+  }
 
-    .rc { background: var(--paper); padding: 1.6rem; }
+  .tags {
+    display: flex; flex-wrap: wrap; gap: 0.4rem;
+    margin-bottom: 1.2rem;
+  }
+  .tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    padding: 0.3rem 0.7rem;
+    border-radius: 100px;
+    border: 1px solid;
+    opacity: 0.7;
+  }
 
-    .rday {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 10px; font-weight: 700;
-      letter-spacing: 0.2em; text-transform: uppercase;
-      color: var(--muted); margin-bottom: 0.7rem;
-    }
+  .insight {
+    border-left: 2px solid;
+    padding: 0.8rem 1rem;
+    background: rgba(255,255,255,0.02);
+    border-radius: 0 6px 6px 0;
+  }
+  .insight-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.3rem;
+    opacity: 0.6;
+  }
+  .insight-text {
+    font-size: 0.82rem;
+    line-height: 1.65;
+    color: rgba(232,224,212,0.65);
+    font-style: italic;
+  }
 
-    .rrange {
-      display: flex; align-items: baseline;
-      gap: 6px; flex-wrap: wrap; margin-bottom: 0.2rem;
-    }
+  .era-visual {
+    display: flex; flex-direction: column; gap: 0.8rem;
+    padding: 0 3rem;
+    padding-top: 1.2rem;
+  }
 
-    .rn {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 3.5rem; font-weight: 900;
-      line-height: 1; letter-spacing: -0.02em;
-      color: var(--olive);
-    }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 1rem 1.2rem;
+  }
+  .stat-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 0.2rem;
+  }
+  .stat-label {
+    font-size: 0.75rem;
+    color: var(--muted);
+    line-height: 1.4;
+  }
 
-    .rsep {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 1.3rem; font-weight: 300; color: var(--muted);
-    }
+  .connection-pill {
+    background: rgba(255,255,255,0.03);
+    border: 1px dashed rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 0.9rem 1.1rem;
+    font-size: 0.78rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .connection-pill strong {
+    color: var(--accent);
+    font-weight: 500;
+  }
 
-    .ru {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 1rem; font-weight: 300; color: var(--olive2);
-      align-self: flex-end; padding-bottom: 6px; letter-spacing: 0.06em;
-    }
+  /* Colors per era */
+  .prehistory .era-dot { border-color: var(--prehistory); color: var(--prehistory); }
+  .prehistory .era-label { color: var(--prehistory); }
+  .prehistory .insight { border-color: var(--prehistory); }
+  .prehistory .tag { border-color: var(--prehistory); color: var(--prehistory); }
+  .prehistory .stat-value { color: var(--prehistory); }
 
-    .rcups { font-size: 12px; color: var(--muted); font-style: italic; margin-bottom: 1rem; }
+  .agricultural .era-dot { border-color: var(--agricultural); color: var(--agricultural); }
+  .agricultural .era-label { color: var(--agricultural); }
+  .agricultural .insight { border-color: var(--agricultural); }
+  .agricultural .tag { border-color: var(--agricultural); color: var(--agricultural); }
+  .agricultural .stat-value { color: var(--agricultural); }
 
-    .rdiv { border: none; border-top: 1px solid var(--border); margin: 0.9rem 0; }
+  .industrial .era-dot { border-color: var(--industrial); color: var(--industrial); }
+  .industrial .era-label { color: var(--industrial); }
+  .industrial .insight { border-color: var(--industrial); }
+  .industrial .tag { border-color: var(--industrial); color: var(--industrial); }
+  .industrial .stat-value { color: var(--industrial); }
 
-    .bi {
-      display: flex; justify-content: space-between;
-      font-size: 11px; padding: 3px 0; gap: 8px; color: var(--olive2);
-    }
-    .bi .bl { flex: 1; opacity: 0.75; }
-    .bi .bv { font-weight: 600; white-space: nowrap; }
+  .century20 .era-dot { border-color: var(--century20); color: var(--century20); }
+  .century20 .era-label { color: var(--century20); }
+  .century20 .insight { border-color: var(--century20); }
+  .century20 .tag { border-color: var(--century20); color: var(--century20); }
+  .century20 .stat-value { color: var(--century20); }
 
-    .ph { font-size: 12px; font-style: italic; color: var(--muted); padding: 1rem 0; }
+  .contemporary .era-dot { border-color: var(--contemporary); color: var(--contemporary); }
+  .contemporary .era-label { color: var(--contemporary); }
+  .contemporary .insight { border-color: var(--contemporary); }
+  .contemporary .tag { border-color: var(--contemporary); color: var(--contemporary); }
+  .contemporary .stat-value { color: var(--contemporary); }
 
-    /* acento azul no treino */
-    .rc.tre .rn { color: #4A849C; }
+  /* Conclusion */
+  .conclusion {
+    padding: 6rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
 
-    /* ── AVISO ── */
-    .warn {
-      background: #FFF9EA; border: 1.5px solid #D4AA50;
-      padding: 1rem 1.4rem; margin-top: 1px;
-      font-size: 13px; font-style: italic; color: #7A5C00;
-      display: none; line-height: 1.6;
-    }
+  .conclusion-bg {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at center, rgba(200,169,110,0.06) 0%, transparent 70%);
+  }
 
-    /* ── FONTES ── */
-    .sources {
-      border-top: 1px solid var(--border);
-      padding: 1.5rem 0 0; margin-top: 2.5rem;
-    }
-    .src-title {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 10px; font-weight: 700;
-      letter-spacing: 0.22em; text-transform: uppercase;
-      color: var(--muted); margin-bottom: 0.75rem;
-    }
-    .sources p {
-      font-size: 11.5px; color: var(--muted);
-      margin-bottom: 0.4rem; line-height: 1.6;
-    }
-    .sources p:last-child { margin: 0; }
+  .conclusion-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    transition: opacity 0.7s ease 0.2s, transform 0.7s ease 0.2s;
+    transform: translateY(20px);
+  }
 
-    footer {
-      text-align: center; font-size: 12px;
-      color: var(--muted); margin-top: 1.5rem; line-height: 1.6;
-    }
+  .conclusion-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 700;
+    max-width: 700px;
+    margin: 0 auto 1.5rem;
+    line-height: 1.1;
+    opacity: 0;
+    transition: opacity 0.7s ease 0.35s, transform 0.7s ease 0.35s;
+    transform: translateY(20px);
+  }
 
-    @keyframes bump {
-      0%   { transform: scale(1); }
-      40%  { transform: scale(1.1); }
-      100% { transform: scale(1); }
-    }
-    .bump { animation: bump 0.22s ease; }
+  .conclusion-body {
+    font-size: 0.95rem;
+    line-height: 1.8;
+    color: rgba(232,224,212,0.65);
+    max-width: 680px;
+    margin: 0 auto 3rem;
+    opacity: 0;
+    transition: opacity 0.7s ease 0.5s, transform 0.7s ease 0.5s;
+    transform: translateY(20px);
+  }
 
-    @media (max-width: 580px) {
-      .hero { padding: 1.5rem 1.2rem 0; }
-      .page { padding: 0 1.2rem 3rem; }
-      .hero-body { flex-direction: column-reverse; align-items: center; }
-      .hero-illus { margin-bottom: 0.5rem; }
-      .results-grid { grid-template-columns: 1fr; }
-      .irow { flex-direction: column; align-items: flex-start; }
-      .rw, .tg { width: 100%; }
-    }
-  </style>
+  .roles-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    max-width: 800px;
+    margin: 0 auto;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity 0.7s ease 0.65s, transform 0.7s ease 0.65s;
+    transform: translateY(20px);
+  }
+
+  .role-item {
+    background: var(--surface);
+    padding: 1.8rem 1.5rem;
+    text-align: left;
+  }
+  .role-icon { font-size: 1.5rem; margin-bottom: 0.8rem; }
+  .role-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+    color: var(--accent);
+  }
+  .role-desc {
+    font-size: 0.75rem;
+    line-height: 1.6;
+    color: var(--muted);
+  }
+
+  .conclusion.visible .conclusion-eyebrow,
+  .conclusion.visible .conclusion-title,
+  .conclusion.visible .conclusion-body,
+  .conclusion.visible .roles-grid {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Footer */
+  footer {
+    border-top: 1px solid var(--line);
+    padding: 2rem;
+    text-align: center;
+  }
+  footer p {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  /* Progress bar */
+  .progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 2px;
+    background: linear-gradient(to right, var(--prehistory), var(--agricultural), var(--industrial), var(--century20), var(--contemporary));
+    z-index: 1000;
+    transition: width 0.1s linear;
+  }
+
+  /* Nav dots */
+  .nav-dots {
+    position: fixed;
+    right: 2rem; top: 50%;
+    transform: translateY(-50%);
+    display: flex; flex-direction: column; gap: 0.8rem;
+    z-index: 100;
+  }
+  .nav-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--muted);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+  .nav-dot::before {
+    content: attr(data-label);
+    position: absolute;
+    right: 16px;
+    top: 50%; transform: translateY(-50%);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+  .nav-dot:hover::before { opacity: 1; }
+  .nav-dot.active { background: var(--accent); transform: scale(1.5); }
+
+  @media (max-width: 768px) {
+    .timeline-spine { left: 30px; }
+    .era { grid-template-columns: 60px 1fr; }
+    .era-node { grid-column: 1; }
+    .era-card, .era:nth-child(even) .era-content,
+    .era:nth-child(odd) .era-content { grid-column: 2; order: unset; }
+    .era-visual, .era:nth-child(even) .era-extra,
+    .era:nth-child(odd) .era-extra { grid-column: 2; order: unset; padding: 0 1rem; }
+    .era-card { padding: 0 1rem; }
+    .roles-grid { grid-template-columns: 1fr; }
+    .nav-dots { display: none; }
+    body { cursor: auto; }
+    .cursor, .cursor-follower { display: none; }
+    .era-dot { width: 36px; height: 36px; font-size: 1rem; }
+  }
+</style>
 </head>
 <body>
 
-<!-- ══ HERO ══ -->
-<div class="hero">
-  <div class="hero-meta">
-    <span>UCS — Universidade de Caxias do Sul</span>
-    <span>Saúde Coletiva</span>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-follower" id="cursor-follower"></div>
+<div class="progress-bar" id="progress"></div>
+
+<nav class="nav-dots" id="nav-dots">
+  <div class="nav-dot active" data-label="Início" data-target="hero"></div>
+  <div class="nav-dot" data-label="Pré-história" data-target="era-1"></div>
+  <div class="nav-dot" data-label="Rev. Agrícola" data-target="era-2"></div>
+  <div class="nav-dot" data-label="Rev. Industrial" data-target="era-3"></div>
+  <div class="nav-dot" data-label="Século XX" data-target="era-4"></div>
+  <div class="nav-dot" data-label="Atualidade" data-target="era-5"></div>
+  <div class="nav-dot" data-label="Nutricionista" data-target="conclusion"></div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="hero-grain"></div>
+  <div class="hero-orb orb1"></div>
+  <div class="hero-orb orb2"></div>
+  <div class="hero-orb orb3"></div>
+  <p class="hero-eyebrow">Nutrição · Ciência e Exercício Profissional</p>
+  <h1 class="hero-title">A História<br>do que <em>Comemos</em></h1>
+  <p class="hero-sub">Uma jornada de 2,5 milhões de anos — da caça e coleta aos ultraprocessados — e o papel do nutricionista neste cenário.</p>
+  <div class="hero-scroll">
+    <span>Role para explorar</span>
+    <div class="scroll-line"></div>
   </div>
+</section>
 
-  <div class="hero-body">
-    <div class="hero-text">
-      
-      <h1 class="hero-title">HIDRATAÇÃO</h1>
-    </div>
+<!-- TIMELINE -->
+<section class="timeline-section" id="timeline">
+  <div class="timeline-spine"></div>
 
-    <!-- ILUSTRAÇÃO: dois personagens flat bebendo água, fiel ao slide -->
-    
-  </div>
-
-  <hr class="hero-rule">
-</div>
-
-<!-- ══ CONTEÚDO ══ -->
-<div class="page">
-
-  <p class="page-subtitle">Calculadora de hidratação diária</p>
-
-  <!-- Card dados pessoais -->
-  <div class="card">
-    <p class="section-label">dados pessoais</p>
-    <div class="irow">
-      <label>Peso <span class="hint">em quilogramas</span></label>
-      <div class="rw">
-        <input type="range" id="peso" min="30" max="150" value="65" step="1" oninput="calc()">
-        <span class="rv" id="peso-v">65 kg</span>
+  <!-- ERA 1: PRÉ-HISTÓRIA -->
+  <div class="era prehistory" id="era-1">
+    <div class="era-card era-content">
+      <p class="era-label">Era 01</p>
+      <h2 class="era-heading">Pré-História</h2>
+      <p class="era-body">Por mais de 2 milhões de anos, nosso corpo evoluiu junto com a dieta. Caça, pesca e coleta forneciam alimentos 100% in natura com alta densidade de micronutrientes. O domínio do fogo, há cerca de 1 milhão de anos, foi o maior salto tecnológico alimentar da história humana.</p>
+      <div class="tags">
+        <span class="tag">100% in natura</span>
+        <span class="tag">Alta diversidade</span>
+        <span class="tag">Nômades</span>
+        <span class="tag">Fogo ~1M a.C.</span>
+      </div>
+      <div class="insight">
+        <p class="insight-label">🔬 Reflexão Crítica</p>
+        <p class="insight-text">Este período é o modelo evolutivo da "dieta saudável". O organismo humano foi moldado para esta alimentação — o que explica biologicamente por que os ultraprocessados causam tanto dano.</p>
       </div>
     </div>
-    <div class="irow">
-      <label>Sexo biológico <span class="hint">ajusta a faixa de referência</span></label>
-      <div class="tg" id="sexo-g">
-        <button class="tb on" onclick="tog(&#39;sexo&#39;,&#39;F&#39;,this)">Feminino</button>
-        <button class="tb" onclick="tog(&#39;sexo&#39;,&#39;M&#39;,this)">Masculino</button>
-      </div>
+    <div class="era-node">
+      <div class="era-dot">🦴</div>
+      <p class="era-year">2,5M a.C.<br>– 10.000 a.C.</p>
     </div>
-    <div class="irow" style="margin-bottom:0">
-      <label>Rotina diária <span class="hint">fora do exercício físico</span></label>
-      <div class="tg" id="rotina-g">
-        <button class="tb on" onclick="tog(&#39;rotina&#39;,&#39;sentado&#39;,this)">Sentado</button>
-        <button class="tb" onclick="tog(&#39;rotina&#39;,&#39;misto&#39;,this)">Misto</button>
-        <button class="tb" onclick="tog(&#39;rotina&#39;,&#39;ativo&#39;,this)">Ativo/em pé</button>
+    <div class="era-visual">
+      <div class="stat-card">
+        <p class="stat-value">4M</p>
+        <p class="stat-label">anos atrás surgiu o bipedalismo, libertando as mãos para carregar e processar alimentos</p>
       </div>
-    </div>
-  </div>
-
-  <!-- Card atividade física -->
-  <div class="card">
-    <p class="section-label">atividade física</p>
-    <div class="irow" style="flex-direction:column;align-items:flex-start">
-      <label style="margin-bottom:0.5rem">Você pratica exercícios físicos?</label>
-      <div class="tg" id="exercicio-g" style="width:100%">
-        <button class="tb on" onclick="tog(&#39;exercicio&#39;,&#39;nao&#39;,this)">Não pratico</button>
-        <button class="tb" onclick="tog(&#39;exercicio&#39;,&#39;sim&#39;,this)">Pratico</button>
-      </div>
-    </div>
-    <div class="tsec" id="tsec" style="display: none;">
-      <div class="irow">
-        <label>Dias de treino por semana</label>
-        <div class="rw">
-          <input type="range" id="dias" min="1" max="7" value="3" step="1" oninput="calc()">
-          <span class="rv" id="dias-v">5 dias</span>
-        </div>
-      </div>
-      <div class="irow">
-        <label>Duração média do treino</label>
-        <div class="tg" id="dur-g">
-          <button class="tb" onclick="tog(&#39;dur&#39;,30,this)">30 min</button>
-          <button class="tb" onclick="tog(&#39;dur&#39;,60,this)">1 hora</button>
-          <button class="tb on" onclick="tog(&#39;dur&#39;,90,this)">1h30</button>
-          <button class="tb" onclick="tog(&#39;dur&#39;,120,this)">2 horas</button>
-        </div>
-      </div>
-      <div class="irow" style="margin-bottom:0">
-        <label>Intensidade do treino <span class="hint" id="int-hint">corrida leve, musculação, ciclismo</span></label>
-        <div class="tg" id="int-g">
-          <button class="tb" onclick="tog(&#39;int&#39;,&#39;leve&#39;,this)">Leve</button>
-          <button class="tb on" onclick="tog(&#39;int&#39;,&#39;mod&#39;,this)">Moderado</button>
-          <button class="tb" onclick="tog(&#39;int&#39;,&#39;int&#39;,this)">Intenso</button>
-        </div>
+      <div class="connection-pill">
+        <strong>Conexão atual:</strong> O conceito de "dieta paleolítica" moderna busca resgatar padrões desta era — evidências de eficácia para perda de peso e controle glicêmico existem, mas com ressalvas.
       </div>
     </div>
   </div>
 
-  <!-- Card fatores adicionais -->
-  <div class="card">
-    <p class="section-label">fatores adicionais</p>
-    <p style="font-size:13px;color:var(--muted);margin-bottom:1rem;">Esses fatores se aplicam a ambos os dias.</p>
-    <div class="chk-g">
-      <label class="chk-i"><input type="checkbox" id="calor" onchange="calc()"> Exposição prolongada ao calor (sol, obras, ambientes quentes)</label>
-      <label class="chk-i"><input type="checkbox" id="febre" onchange="calc()"> Febre ou perda de líquidos (diarreia, vômito)</label>
-      <label class="chk-i"><input type="checkbox" id="gest" onchange="calc()"> Gestante</label>
-      <label class="chk-i"><input type="checkbox" id="lact" onchange="calc()"> Amamentando</label>
-      <label class="chk-i"><input type="checkbox" id="alc" onchange="calc()"> Consumiu álcool hoje</label>
-    </div>
-  </div>
-
-  <!-- Resultados -->
-  <div class="results-grid">
-    <div class="rc des">
-      <p class="rday">🌙 Dia de descanso</p>
-      <div class="rrange">
-        <span class="rn bump" id="d-min">2,0</span>
-        <span class="rsep">a</span>
-        <span class="rn bump" id="d-max">2,1</span>
-        <span class="ru">litros</span>
+  <!-- ERA 2: REVOLUÇÃO AGRÍCOLA -->
+  <div class="era agricultural" id="era-2">
+    <div class="era-card era-content">
+      <p class="era-label">Era 02</p>
+      <h2 class="era-heading">Revolução Agrícola</h2>
+      <p class="era-body">O Neolítico marcou a transição de caçadores-coletores para agricultores sedentários. O cultivo de cereais trouxe segurança alimentar, mas reduziu drasticamente a diversidade da dieta. Surgem os primeiros processos de conservação: salga, secagem e fermentação.</p>
+      <div class="tags">
+        <span class="tag">Sedentarismo</span>
+        <span class="tag">Cereais</span>
+        <span class="tag">Fermentação</span>
+        <span class="tag">Propriedade</span>
       </div>
-      <p class="rcups" id="d-cups">10–11 copos de 200 ml</p>
-      <hr class="rdiv">
-      <div id="d-bd"><div class="bi"><span class="bl">Base (31–33 ml/kg × 65kg)</span><span class="bv">+2,0–2,1 L</span></div></div>
+      <div class="insight">
+        <p class="insight-label">🔬 Reflexão Crítica</p>
+        <p class="insight-text">A dependência de monoculturas — soja, milho, trigo — que domina o mundo hoje tem raízes aqui. A perda de diversidade alimentar gerou as primeiras deficiências de micronutrientes na história humana.</p>
+      </div>
     </div>
-    <div class="rc tre">
-      <p class="rday">🏃 Dia de treino</p>
-      <p class="ph" id="tre-ph" style="display: block;">Ative "Pratico exercícios" acima</p>
-      <div id="tre-data" style="display: none;">
-        <div class="rrange">
-          <span class="rn bump" id="t-min">1,8</span>
-          <span class="rsep">a</span>
-          <span class="rn bump" id="t-max">2,0</span>
-          <span class="ru">litros</span>
-        </div>
-        <p class="rcups" id="t-cups">9–10 copos · 5x/sem (2 dias descanso)</p>
-        <hr class="rdiv">
-        <div id="t-bd"><div class="bi"><span class="bl">Base (31–33 ml/kg × 30kg)</span><span class="bv">+0,9–1,0 L</span></div><div class="bi"><span class="bl">Exercício 90min mod (ACSM)</span><span class="bv">+0,8–1,1 L</span></div></div>
+    <div class="era-node">
+      <div class="era-dot">🌾</div>
+      <p class="era-year">~10.000 a.C.<br>– 5.000 a.C.</p>
+    </div>
+    <div class="era-visual">
+      <div class="stat-card">
+        <p class="stat-value">↓200+</p>
+        <p class="stat-label">espécies consumidas na pré-história reduzidas para poucas culturas básicas na agricultura</p>
+      </div>
+      <div class="connection-pill">
+        <strong>Conexão atual:</strong> O PNAE (Programa Nacional de Alimentação Escolar) incentiva a diversidade alimentar e alimentos regionais — resposta direta aos problemas gerados pela monocultura.
       </div>
     </div>
   </div>
 
-  <div class="warn" id="warn" style="display: none;"></div>
-
-  <!-- Fontes -->
-  <div class="sources">
-    <p class="src-title">Fontes científicas</p>
-    <p><strong>Base hídrica (ml/kg):</strong> aproximação prática derivada das Adequate Intakes da EFSA (2,0 L/dia mulheres; 2,5 L/dia homens) e IOM — Institute of Medicine. <em>Dietary Reference Intakes for Water, Potassium, Sodium, Chloride, and Sulfate.</em> Washington, DC: NAP, 2004.</p>
-    <p><strong>Gestação (+300 ml) e lactação (+700 ml):</strong> EFSA Panel on Dietetic Products, Nutrition, and Allergies. <em>Scientific Opinion on Dietary Reference Values for Water.</em> EFSA Journal 2010;8(3):1459.</p>
-    <p><strong>Acréscimo por exercício (0,4–0,8 L/hora):</strong> American College of Sports Medicine (ACSM). <em>Exercise and Fluid Replacement — Position Stand.</em> Medicine &amp; Science in Sports &amp; Exercise, 2007.</p>
-    <p><strong>Nota:</strong> A OMS não publica recomendações específicas de hidratação por dias de treino. As referências de atividade física da OMS (150–300 min/semana) foram usadas apenas para contextualizar níveis de atividade.</p>
+  <!-- ERA 3: REVOLUÇÃO INDUSTRIAL -->
+  <div class="era industrial" id="era-3">
+    <div class="era-card era-content">
+      <p class="era-label">Era 03</p>
+      <h2 class="era-heading">Revolução Industrial</h2>
+      <p class="era-body">A urbanização acelerada exigiu comida prática e barata para trabalhadores com jornadas de 12–16 horas. Surgem o enlatamento, a pasteurização (Pasteur, 1864) e a refrigeração. Nasce a globalização alimentar e a indústria de alimentos moderna.</p>
+      <div class="tags">
+        <span class="tag">Enlatamento</span>
+        <span class="tag">Pasteurização</span>
+        <span class="tag">Açúcar refinado</span>
+        <span class="tag">Globalização</span>
+      </div>
+      <div class="insight">
+        <p class="insight-label">🔬 Reflexão Crítica</p>
+        <p class="insight-text">Nestlé, Heinz — nascem aqui as primeiras grandes indústrias alimentícias. A praticidade se torna valor central, frequentemente em detrimento da qualidade nutricional. Um padrão que persiste até hoje.</p>
+      </div>
+    </div>
+    <div class="era-node">
+      <div class="era-dot">⚙️</div>
+      <p class="era-year">~1760<br>– 1840</p>
+    </div>
+    <div class="era-visual">
+      <div class="stat-card">
+        <p class="stat-value">1864</p>
+        <p class="stat-label">Louis Pasteur desenvolve a pasteurização, revolucionando a segurança alimentar global</p>
+      </div>
+      <div class="connection-pill">
+        <strong>Conexão atual:</strong> A vigilância sanitária e os critérios de segurança alimentar do ANVISA têm raízes diretas nos processos iniciados nesta era industrial.
+      </div>
+    </div>
   </div>
 
-  <footer>
-    Esta calculadora é uma ferramenta educativa.<br>
-    Consulte um nutricionista para orientação individualizada.
-  </footer>
+  <!-- ERA 4: SÉCULO XX -->
+  <div class="era century20" id="era-4">
+    <div class="era-card era-content">
+      <p class="era-label">Era 04</p>
+      <h2 class="era-heading">Século XX</h2>
+      <p class="era-body">Explosão dos ultraprocessados, congelados e do fast-food. A entrada da mulher no mercado de trabalho desvalorilizou o ato de cozinhar. A propaganda televisiva moldou comportamentos alimentares de gerações inteiras. Resultado: epidemia global de obesidade e doenças crônicas.</p>
+      <div class="tags">
+        <span class="tag">Ultraprocessados</span>
+        <span class="tag">Fast-food</span>
+        <span class="tag">Gordura trans</span>
+        <span class="tag">TV & publicidade</span>
+      </div>
+      <div class="insight">
+        <p class="insight-label">🔬 Reflexão Crítica</p>
+        <p class="insight-text">As raízes da crise de saúde pública atual estão neste século. O ultraprocessado passou a dominar mais de 20% das calorias do brasileiro. Diabetes, hipertensão e câncer emergem como epidemias não-transmissíveis.</p>
+      </div>
+    </div>
+    <div class="era-node">
+      <div class="era-dot">📺</div>
+      <p class="era-year">1900<br>– 1999</p>
+    </div>
+    <div class="era-visual">
+      <div class="stat-card">
+        <p class="stat-value">>20%</p>
+        <p class="stat-label">das calorias do brasileiro provêm de ultraprocessados — herança direta do século XX</p>
+      </div>
+      <div class="connection-pill">
+        <strong>Conexão atual:</strong> A classificação NOVA de alimentos (Monteiro et al., UNICAMP) nasce para desafiar esta herança, categorizando alimentos pelo grau de processamento industrial.
+      </div>
+    </div>
+  </div>
 
-</div>
+  <!-- ERA 5: ATUALIDADE -->
+  <div class="era contemporary" id="era-5">
+    <div class="era-card era-content">
+      <p class="era-label">Era 05</p>
+      <h2 class="era-heading">Mundo Contemporâneo</h2>
+      <p class="era-body">Vivemos uma era de contradições: ultraprocessados coexistem com movimentos veganos, orgânicos e de sustentabilidade. A nova rotulagem nutricional frontal (2020) e o Guia Alimentar para a População Brasileira marcam uma resposta regulatória. Pós-pandemia, a insegurança alimentar aumentou.</p>
+      <div class="tags">
+        <span class="tag">Rótulo frontal</span>
+        <span class="tag">Clean Label</span>
+        <span class="tag">Veganismo</span>
+        <span class="tag">Insegurança alimentar</span>
+      </div>
+      <div class="insight">
+        <p class="insight-label">🔬 Reflexão Crítica</p>
+        <p class="insight-text">A "dupla carga" nutricional: obesidade e desnutrição coexistem na mesma família, no mesmo país. Esta é a realidade que o nutricionista contemporâneo precisa enfrentar com evidência e política pública.</p>
+      </div>
+    </div>
+    <div class="era-node">
+      <div class="era-dot">🌱</div>
+      <p class="era-year">2000<br>– Presente</p>
+    </div>
+    <div class="era-visual">
+      <div class="stat-card">
+        <p class="stat-value">2020</p>
+        <p class="stat-label">Nova rotulagem nutricional frontal obrigatória no Brasil — uma das mais avançadas do mundo</p>
+      </div>
+      <div class="connection-pill">
+        <strong>Conexão atual:</strong> O Guia Alimentar para a População Brasileira (2014) é referência mundial em política nutricional — ele prioriza alimentos in natura e minimamente processados, fazendo o caminho de volta à pré-história.
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- CONCLUSION -->
+<section class="conclusion" id="conclusion">
+  <div class="conclusion-bg"></div>
+  <p class="conclusion-eyebrow">O papel do profissional</p>
+  <h2 class="conclusion-title">O Nutricionista como Mediador Crítico</h2>
+  <p class="conclusion-body">Frente a 2,5 milhões de anos de mudanças alimentares condensadas nos últimos 200 anos, o nutricionista atua na interseção entre ciência, cultura, política e saúde individual — capacitando pessoas a fazerem escolhas conscientes em um ambiente alimentar obesogênico.</p>
+  <div class="roles-grid">
+    <div class="role-item">
+      <div class="role-icon">🎓</div>
+      <p class="role-title">Educador Alimentar</p>
+      <p class="role-desc">Capacita o indivíduo a interpretar rótulos, compreender o processamento dos alimentos e fazer escolhas conscientes.</p>
+    </div>
+    <div class="role-item">
+      <div class="role-icon">⚖️</div>
+      <p class="role-title">Agente de Políticas Públicas</p>
+      <p class="role-desc">Atua no PNAE e em programas de segurança alimentar, combatendo a dupla carga nutricional de forma sistêmica.</p>
+    </div>
+    <div class="role-item">
+      <div class="role-icon">🌍</div>
+      <p class="role-title">Defensor da Sustentabilidade</p>
+      <p class="role-desc">Incentiva alimentos locais e sazonais para mitigar os impactos ambientais do sistema alimentar industrializado.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>Nutrição: Ciência e Exercício Profissional &nbsp;·&nbsp; Linha do Tempo Alimentar Humana</p>
+</footer>
 
 <script>
-  const S = { sexo:'F', exercicio:'nao', rotina:'sentado', dur:30, int:'leve' };
-
-  const intHints = {
-    leve:'caminhada, yoga, alongamento',
-    mod: 'corrida leve, musculação, ciclismo',
-    int: 'treino de alta intensidade, esportes competitivos'
-  };
-  const intRate = {
-    leve:{ min:0.4, max:0.55 },
-    mod: { min:0.55, max:0.7 },
-    int: { min:0.7, max:0.8 }
-  };
-  const rotinaEx = {
-    sentado:{ min:0,   max:0   },
-    misto:  { min:100, max:200 },
-    ativo:  { min:200, max:300 }
-  };
-
-  function tog(key, val, btn) {
-    S[key] = val;
-    document.querySelectorAll('#'+key+'-g .tb').forEach(b => b.classList.remove('on'));
-    btn.classList.add('on');
-    if (key === 'exercicio') {
-      document.getElementById('tsec').style.display     = val==='sim' ? 'block' : 'none';
-      document.getElementById('tre-ph').style.display   = val==='sim' ? 'none'  : 'block';
-      document.getElementById('tre-data').style.display = val==='sim' ? 'block' : 'none';
-    }
-    if (key === 'int') document.getElementById('int-hint').textContent = intHints[val];
-    calc();
+  // Cursor
+  const cursor = document.getElementById('cursor');
+  const follower = document.getElementById('cursor-follower');
+  let mx = 0, my = 0, fx = 0, fy = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  function animateCursor() {
+    cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
+    fx += (mx - fx) * 0.12; fy += (my - fy) * 0.12;
+    follower.style.left = fx + 'px'; follower.style.top = fy + 'px';
+    requestAnimationFrame(animateCursor);
   }
+  animateCursor();
 
-  function fmt(ml) { return (ml/1000).toFixed(1).replace('.',','); }
+  // Progress
+  const progress = document.getElementById('progress');
+  window.addEventListener('scroll', () => {
+    const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+    progress.style.width = (pct * 100) + '%';
+  });
 
-  function bump(id) {
-    const el = document.getElementById(id);
-    el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump');
-  }
+  // Nav dots
+  const dots = document.querySelectorAll('.nav-dot');
+  dots.forEach(dot => {
+    dot.addEventListener('click', () => {
+      const target = document.getElementById(dot.dataset.target);
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
 
-  function buildBd(items, id) {
-    document.getElementById(id).innerHTML = items.map(i => {
-      const v = i.min===i.max ? fmt(i.min)+' L' : fmt(i.min)+'–'+fmt(i.max)+' L';
-      return `<div class="bi"><span class="bl">${i.label}</span><span class="bv">+${v}</span></div>`;
-    }).join('');
-  }
+  // Intersection observer for eras
+  const eras = document.querySelectorAll('.era');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) e.target.classList.add('visible');
+    });
+  }, { threshold: 0.15 });
+  eras.forEach(era => obs.observe(era));
 
-  function calc() {
-    const peso = parseInt(document.getElementById('peso').value);
-    document.getElementById('peso-v').textContent = peso + ' kg';
-    const dias = parseInt(document.getElementById('dias').value);
-    document.getElementById('dias-v').textContent = dias + (dias===1?' dia':' dias');
+  // Conclusion observer
+  const conclusion = document.querySelector('.conclusion');
+  const cObs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.2 });
+  cObs.observe(conclusion);
 
-    const mlMin = S.sexo==='F' ? 31 : 33;
-    const mlMax = S.sexo==='F' ? 33 : 35;
-    const bMin = peso*mlMin, bMax = peso*mlMax;
-
-    const dBd = [{ label:'Base ('+mlMin+'–'+mlMax+' ml/kg × '+peso+'kg)', min:bMin, max:bMax }];
-    const tBd = [{ label:'Base ('+mlMin+'–'+mlMax+' ml/kg × '+peso+'kg)', min:bMin, max:bMax }];
-
-    const rot = rotinaEx[S.rotina];
-    if (rot.max > 0) {
-      dBd.push({ label:'Rotina ativa', min:rot.min, max:rot.max });
-      tBd.push({ label:'Rotina ativa', min:rot.min, max:rot.max });
-    }
-
-    const fatores = [];
-    if (document.getElementById('calor').checked) fatores.push({ label:'Exposição ao calor',        min:300, max:500 });
-    if (document.getElementById('febre').checked) fatores.push({ label:'Febre / perda de líquidos', min:400, max:600 });
-    if (document.getElementById('gest').checked)  fatores.push({ label:'Gestação (EFSA 2010)',       min:300, max:300 });
-    if (document.getElementById('lact').checked)  fatores.push({ label:'Amamentação (EFSA 2010)',    min:700, max:700 });
-    if (document.getElementById('alc').checked)   fatores.push({ label:'Compensação álcool',         min:200, max:300 });
-
-    let fMin=0, fMax=0;
-    fatores.forEach(f => { fMin+=f.min; fMax+=f.max; dBd.push(f); tBd.push(f); });
-
-    const dMin = bMin+rot.min+fMin, dMax = bMax+rot.max+fMax;
-    document.getElementById('d-min').textContent = fmt(dMin);
-    document.getElementById('d-max').textContent = fmt(dMax);
-    document.getElementById('d-cups').textContent =
-      Math.round(dMin/200)+'–'+Math.round(dMax/200)+' copos de 200 ml';
-    buildBd(dBd,'d-bd');
-    bump('d-min'); bump('d-max');
-
-    if (S.exercicio === 'sim') {
-      const horas = S.dur/60, rate = intRate[S.int];
-      const exMin = Math.round(rate.min*horas*1000), exMax = Math.round(rate.max*horas*1000);
-      tBd.push({ label:'Exercício '+S.dur+'min '+S.int+' (ACSM)', min:exMin, max:exMax });
-      const tMin = bMin+rot.min+fMin+exMin, tMax = bMax+rot.max+fMax+exMax;
-      document.getElementById('t-min').textContent = fmt(tMin);
-      document.getElementById('t-max').textContent = fmt(tMax);
-      document.getElementById('t-cups').textContent =
-        Math.round(tMin/200)+'–'+Math.round(tMax/200)+' copos · '+dias+'x/sem ('+(7-dias)+' dias descanso)';
-      buildBd(tBd,'t-bd');
-      bump('t-min'); bump('t-max');
-    }
-
-    const warns = [];
-    if (document.getElementById('gest').checked && document.getElementById('lact').checked)
-      warns.push('Gestação e amamentação marcadas ao mesmo tempo — verifique qual se aplica.');
-    const mx = S.exercicio==='sim'
-      ? (bMax+rot.max+fMax+Math.round(intRate[S.int].max*(S.dur/60)*1000))
-      : (bMax+rot.max+fMax);
-    if (mx > 4500) warns.push('Valor máximo elevado. Para demandas acima de 4,5 L/dia, recomendamos avaliação com nutricionista.');
-    const w = document.getElementById('warn');
-    w.style.display = warns.length ? 'block' : 'none';
-    w.innerHTML = warns.length ? '⚠️ '+warns.join(' ') : '';
-  }
-
-  calc();
+  // Active nav dot
+  const sections = ['hero','era-1','era-2','era-3','era-4','era-5','conclusion'];
+  const secObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const idx = sections.indexOf(e.target.id);
+        dots.forEach((d,i) => d.classList.toggle('active', i === idx));
+      }
+    });
+  }, { threshold: 0.4 });
+  sections.forEach(id => { const el = document.getElementById(id); if (el) secObs.observe(el); });
 </script>
-
-
-</body></html>
+</body>
+</html>
